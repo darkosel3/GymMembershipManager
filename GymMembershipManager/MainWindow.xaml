@@ -3,10 +3,82 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:GymMembershipManager.Services"
         xmlns:local="clr-namespace:GymMembershipManager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        FontSize="16"
+        Title="MainWindow" Height="800" Width="1300">
+    <Window.Resources>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0" IsEditable="True" x:Name="MemberSearchBox" IsTextSearchCaseSensitive="True" IsTextSearchEnabled="False" 
+                      Width="400" Height="36" HorizontalAlignment="Left"
+                      ItemsSource="{Binding MembersView}"
+                      DisplayMemberPath="FullName"
+                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedMember}"
+                      IsDropDownOpen="{Binding IsDropDownOpen}"/>
+
+            <Button Grid.Column="1" 
+                    Content="Dodaj člana" 
+                    Command="{Binding OpenAddMemberWindowCommand}"
+                    Padding="15,8"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"/>
+
+        </Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="2">
+            <StackPanel Grid.Row="2" Margin="0,20,0,0">
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <Button Content="◀" Command="{Binding PreviousYearCommand}" Width="45" Height="35" FontSize="18"/>
+                    <TextBlock Text="{Binding CurrentYear}"
+             FontSize="24" FontWeight="Bold" Margin="15,0" VerticalAlignment="Center"/>
+                    <Button Content="▶" Command="{Binding NextYearCommand}" Width="45" Height="35" FontSize="18"/>
+                </StackPanel>
+
+                <ItemsControl ItemsSource="{Binding MonthsInYear}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBlock Text="{Binding MonthName}" Width="110" FontSize="16" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Top"/>
+                                <ItemsControl ItemsSource="{Binding Days}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="38" Height="38" Margin="2" CornerRadius="6"
+                                        Background="{Binding IsPaid, Converter={StaticResource BoolToColorConverter}}">
+                                                <TextBlock Text="{Binding DayNumber}" FontSize="13"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
 
     </Grid>
 </Window>
