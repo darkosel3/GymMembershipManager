@@ -136,15 +136,12 @@ namespace GymMembershipManager.ViewModels
         {
             _windowService.OpenWindow<Views.AddMemberView>();
             LoadMembers();
-            //var newMember = new Member
-            //{
-            //    FirstName = "Test",
-            //    LastName = "testic",
-            //    PhoneNumber = "1231231",
-            //    DateJoined = DateTime.Now
-            //};
-            //_repository.Add(newMember);
-            //Members.Add(newMember);
+        }
+
+        [RelayCommand]
+        private void OpenEditMemberWindow()
+        {
+            _windowService.OpenWindow<Views.AddMemberView>();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace GymMembershipManager.Models
+﻿
+using System.Collections.Generic;
+namespace GymMembershipManager.Models
 {
     public class MembershipType : BaseEntity
     {

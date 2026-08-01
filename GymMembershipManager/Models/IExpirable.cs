@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GymMembershipManager.Models
 {
-    internal interface IExpirable
+    public interface IExpirable
     {
         DateTime ExpiryDate { get; }
         bool IsExpired();

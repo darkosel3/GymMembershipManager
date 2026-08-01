@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymMembershipManager.Data.Repositories
 {
-    internal interface IMembershipTypeRepository
+    public interface IMembershipTypeRepository
     {
         void Add(MembershipType type);
         void Remove(int id);
