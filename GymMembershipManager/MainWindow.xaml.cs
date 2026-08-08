@@ -20,12 +20,10 @@ namespace GymMembershipManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(MemberViewModel viewModel)
+        public MainWindow(MainViewModel vm)
         {
             InitializeComponent();
-            var context = new AppDbContext();
-            var repository = new MemberRepository(context);
-            DataContext = viewModel;
+            DataContext = vm;
             MemberSearchBox.AddHandler(TextBoxBase.TextChangedEvent, new TextChangedEventHandler(FixCaretPosition));
 
         }

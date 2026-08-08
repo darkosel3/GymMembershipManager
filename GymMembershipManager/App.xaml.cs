@@ -35,10 +35,13 @@ namespace GymMembershipManager
             services.AddScoped<IGymEquipmentRepository, GymEquipmentRepository>();
 
             services.AddSingleton<IWindowService, WindowService>();
-
+            services.AddTransient<MainViewModel>();
+            services.AddTransient<MembershipViewModel>();
+            services.AddTransient<GymEquipmentViewModel>();
             services.AddTransient<MemberViewModel>();
             services.AddTransient<AddMemberViewModel>();
-
+            services.AddTransient<ViewModels.MembershipTypeViewModel>();
+            services.AddTransient<Views.MembershipTypeView>();
             services.AddTransient<MainWindow>();
             services.AddTransient<Views.AddMemberView>();
         }

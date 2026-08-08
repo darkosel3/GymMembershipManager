@@ -12,80 +12,177 @@
         <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
     </Window.Resources>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid >
+        <TabControl >
+            <TabItem Header="Članovi">
+                <Grid DataContext="{Binding MemberViewModel}" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" IsEditable="True" x:Name="MemberSearchBox" IsTextSearchCaseSensitive="True" IsTextSearchEnabled="False" 
+                        <ComboBox Grid.Column="0" IsEditable="True" x:Name="MemberSearchBox" IsTextSearchCaseSensitive="True" IsTextSearchEnabled="False" 
                       Width="400" Height="36" HorizontalAlignment="Left"
                       ItemsSource="{Binding MembersView}"
                       DisplayMemberPath="FullName"
                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                       SelectedItem="{Binding SelectedMember}"
                       IsDropDownOpen="{Binding IsDropDownOpen}"/>
-            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button  
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button  
              Content="Izmeni člana" 
              Command="{Binding OpenEditMemberWindowCommand}"
              Padding="15,8"
              VerticalAlignment="Center"
              Margin="0,0,30,0"
              />
-            <Button 
+                            <Button 
                     Content="Dodaj člana" 
                     Command="{Binding OpenAddMemberWindowCommand}"
                     Padding="15,8"
                     VerticalAlignment="Center"/>
-            </StackPanel>
+                        </StackPanel>
 
-        </Grid>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="2">
-            <StackPanel Grid.Row="2" Margin="0,20,0,0">
+                    </Grid>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="2">
+                        <StackPanel Grid.Row="2" Margin="0,20,0,0">
 
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                    <Button Content="◀" Command="{Binding PreviousYearCommand}" Width="45" Height="35" FontSize="18"/>
-                    <TextBlock Text="{Binding CurrentYear}"
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                <Button Content="◀" Command="{Binding PreviousYearCommand}" Width="45" Height="35" FontSize="18"/>
+                                <TextBlock Text="{Binding CurrentYear}"
              FontSize="24" FontWeight="Bold" Margin="15,0" VerticalAlignment="Center"/>
-                    <Button Content="▶" Command="{Binding NextYearCommand}" Width="45" Height="35" FontSize="18"/>
-                </StackPanel>
-
-                <ItemsControl ItemsSource="{Binding MonthsInYear}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBlock Text="{Binding MonthName}" Width="110" FontSize="16" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Top"/>
-                                <ItemsControl ItemsSource="{Binding Days}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Width="38" Height="38" Margin="2" CornerRadius="6"
-                                        Background="{Binding IsPaid, Converter={StaticResource BoolToColorConverter}}">
-                                                <TextBlock Text="{Binding DayNumber}" FontSize="13"
-                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <Button Content="▶" Command="{Binding NextYearCommand}" Width="45" Height="35" FontSize="18"/>
                             </StackPanel>
 
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            <ItemsControl ItemsSource="{Binding MonthsInYear}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                            <TextBlock Text="{Binding MonthName}" Width="110" FontSize="16" FontWeight="Bold" Margin="0,0,10,0" VerticalAlignment="Top"/>
+                                            <ItemsControl ItemsSource="{Binding Days}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Width="30" Height="30" Margin="2" CornerRadius="4"
+                                        Background="{Binding IsPaid, Converter={StaticResource BoolToColorConverter}}">
+                                                            <TextBlock Text="{Binding DayNumber}" FontSize="13"
+                                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
 
-            </StackPanel>
-        </ScrollViewer>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tipovi članarina">
+                <Grid DataContext="{Binding MembershipTypeViewModel}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                  ItemsSource="{Binding Types}"
+                  SelectedItem="{Binding SelectedType}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="False"
+                  CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Naziv" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                            <DataGridTextColumn Header="Cena" Binding="{Binding Price, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+                            <DataGridTextColumn Header="Trajanje (dana)" Binding="{Binding DurationInDays, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Dodaj" Command="{Binding AddTypeCommand}" Padding="15,8" Margin="0,0,10,0"/>
+                        <Button Content="Sačuvaj izmene" Command="{Binding SaveTypeCommand}" Padding="15,8" Margin="0,0,10,0"/>
+                        <Button Content="Obriši" Command="{Binding DeleteTypeCommand}" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Oprema">
+                <Grid DataContext="{Binding GymEquipmentViewModel}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                  ItemsSource="{Binding Equipment}"
+                  SelectedItem="{Binding SelectedEquipment}"
+                  AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Naziv" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="150"/>
+                            <DataGridTextColumn Header="Kategorija" Binding="{Binding Category, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                            <DataGridTextColumn Header="Datum nabavke" Binding="{Binding PurchaseDate, StringFormat=dd.MM.yyyy, UpdateSourceTrigger=PropertyChanged}" Width="120"/>
+                            <DataGridCheckBoxColumn Header="Treba servis" Binding="{Binding NeedsMaintenance, UpdateSourceTrigger=PropertyChanged}" Width="90"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Dodaj" Command="{Binding AddEquipmentCommand}" Padding="15,8" Margin="0,0,10,0"/>
+                        <Button Content="Sačuvaj izmene" Command="{Binding SaveEquipmentCommand}" Padding="15,8" Margin="0,0,10,0"/>
+                        <Button Content="Obriši" Command="{Binding DeleteEquipmentCommand}" Padding="15,8"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Članarine">
+                <Grid DataContext="{Binding MembershipViewModel}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                        <ComboBox Width="180" Margin="0,0,10,0"
+                      ItemsSource="{Binding AllMembers}"
+                      DisplayMemberPath="FullName"
+                      SelectedItem="{Binding NewMember}"/>
+                        <ComboBox Width="150" Margin="0,0,10,0"
+                      ItemsSource="{Binding AllTypes}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding NewType}"/>
+                        <DatePicker Width="130" Margin="0,0,10,0" SelectedDate="{Binding NewStartDate}"/>
+                        <Button Content="Dodaj članarinu" Command="{Binding AddMembershipCommand}" Padding="15,8"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Memberships}"
+                  SelectedItem="{Binding SelectedMembership}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Član" Binding="{Binding Member.FullName}" Width="150"/>
+                            <DataGridTextColumn Header="Tip" Binding="{Binding MembershipType.Name}" Width="120"/>
+                            <DataGridTextColumn Header="Početak" Binding="{Binding StartDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                            <DataGridTextColumn Header="Ističe" Binding="{Binding ExpiryDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button Grid.Row="1" Content="Obriši" Command="{Binding DeleteMembershipCommand}"
+                HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="15,8" Margin="0,0,0,10"/>
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+        
     </Grid>
 </Window>

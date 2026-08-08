@@ -19,7 +19,7 @@ namespace GymMembershipManager.ViewModels
     {
         private readonly IMemberRepository _repository;
         public IWindowService _windowService;
-
+        public MembershipTypeViewModel MembershipTypeViewModel { get; }
 
         [ObservableProperty] private ObservableCollection<MonthGroup> monthsInYear = new();
         [ObservableProperty] private int currentYear = DateTime.Now.Year;
@@ -30,13 +30,8 @@ namespace GymMembershipManager.ViewModels
         private ICollectionView _membersView;
         public ICollectionView MembersView => _membersView;
 
-
-
-
-
         public MemberViewModel(IMemberRepository repository, IWindowService windowService)
         {   
-            
             _repository = repository;
             _windowService = windowService;
             LoadMembers();
@@ -62,14 +57,20 @@ namespace GymMembershipManager.ViewModels
         [RelayCommand]
         private void LoadMembers()
         {
-            Members = new ObservableCollection<Member>(_repository.GetAll());
+            Members.Clear();
+            foreach (var member in _repository.GetAll())
+                Members.Add(member);
         }
 
-        partial void OnSearchTextChanged(string value)
+        [RelayCommand]
+        private void DeleteMember()
         {
-            _membersView.Refresh();
+            if (SelectedMember == null) return;
+            _repository.Delete(SelectedMember.Id);
+            LoadMembers();
         }
 
+  
         private void GenerateDaysForSelectedMember()
         {
             MonthsInYear.Clear();
