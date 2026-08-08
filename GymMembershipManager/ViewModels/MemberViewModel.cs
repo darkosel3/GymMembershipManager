@@ -1,17 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GymMembershipManager.Data.Repositories;
+using GymMembershipManager.Models;
+using GymMembershipManager.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GymMembershipManager.Models;
-using GymMembershipManager.Services;
-using System.Collections.ObjectModel;
-using System.Windows.Data;
+using System.Windows;
 using System.Windows.Automation.Peers;
-using System.ComponentModel;
+using System.Windows.Data;
 
 namespace GymMembershipManager.ViewModels
 {
@@ -19,7 +20,6 @@ namespace GymMembershipManager.ViewModels
     {
         private readonly IMemberRepository _repository;
         public IWindowService _windowService;
-        public MembershipTypeViewModel MembershipTypeViewModel { get; }
 
         [ObservableProperty] private ObservableCollection<MonthGroup> monthsInYear = new();
         [ObservableProperty] private int currentYear = DateTime.Now.Year;
@@ -142,7 +142,17 @@ namespace GymMembershipManager.ViewModels
         [RelayCommand]
         private void OpenEditMemberWindow()
         {
-            _windowService.OpenWindow<Views.AddMemberView>();
+            if (SelectedMember == null)
+            {
+                MessageBox.Show("Morate selektovati člana za izmenu.", "Greška", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            _windowService.OpenWindow<Views.AddMemberView>( window =>
+            {
+                if (window.DataContext is AddMemberViewModel vm)
+                    vm.LoadMember(SelectedMember);
+            });
+            LoadMembers();
         }
     }
 }

@@ -41,5 +41,10 @@ namespace GymMembershipManager.Data.Repositories
             _context.Members.Update(member);
             _context.SaveChanges();
         }
+
+        public Member GetById(int id)
+        {
+            return _context.Members.Find(id);
+        }
     }
 }

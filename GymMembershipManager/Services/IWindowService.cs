@@ -11,5 +11,7 @@ namespace GymMembershipManager.Services
     public interface IWindowService
     {
         void OpenWindow<TWindow>() where TWindow : Window;
+        void OpenWindow<TWindow>(Action<TWindow> configure) where TWindow : Window;
+
     }
 }

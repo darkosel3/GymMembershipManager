@@ -22,24 +22,49 @@ namespace GymMembershipManager.ViewModels
         [ObservableProperty] private string lastName = string.Empty;
         [ObservableProperty] private string phoneNumber = string.Empty;
         [ObservableProperty] private DateTime birthDate = DateTime.Now.AddYears(-18);
-
+        private int? _editingMemberId;
         public AddMemberViewModel(IMemberRepository repository){
             _repository = repository;
+        }
+
+
+        public void LoadMember(Member member)
+        {
+            _editingMemberId = member.Id;
+            FirstName = member.FirstName;
+            LastName = member.LastName;
+            PhoneNumber = member.PhoneNumber;
+            BirthDate = member.BirthDate;
         }
 
 
         [RelayCommand]
         private void Save()
         {
-            var member = new Member
+            if (_editingMemberId.HasValue)
             {
-                FirstName = FirstName,
-                LastName = LastName,
-                PhoneNumber = PhoneNumber,
-                DateJoined = DateTime.Now,
-                BirthDate = BirthDate
-            };
-            _repository.Add(member);
+                var existing = _repository.GetById(_editingMemberId.Value);
+                if (existing != null)
+                {
+                    existing.FirstName = FirstName;
+                    existing.LastName = LastName;
+                    existing.PhoneNumber = PhoneNumber;
+                    existing.BirthDate = BirthDate;
+                    _repository.Update(existing);
+                }
+            }
+            else
+            {
+                var member = new Member
+                {
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    PhoneNumber = PhoneNumber,
+                    DateJoined = DateTime.Now,
+                    BirthDate = BirthDate
+                };
+                _repository.Add(member);
+            }
             RequestClose?.Invoke();
         } 
 

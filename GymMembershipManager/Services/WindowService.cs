@@ -16,10 +16,16 @@ namespace GymMembershipManager.Services
         {
             _serviceProvider = serviceProvider;
         }
-    
-    public void OpenWindow<TWindow>() where TWindow : Window
+
+        public void OpenWindow<TWindow>() where TWindow : Window
         {
             var window = _serviceProvider.GetRequiredService<TWindow>();
+            window.ShowDialog();
+        }
+        public void OpenWindow<TWindow>(Action<TWindow> configure) where TWindow : Window
+        {
+            var window = _serviceProvider.GetRequiredService<TWindow>();
+            configure(window);
             window.ShowDialog();
         }
 
