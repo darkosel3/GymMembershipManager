@@ -39,7 +39,7 @@ namespace GymMembershipManager
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>();
-
+            services.AddSingleton<ISerializationService, SerializationService>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IMembershipRepository, MembershipRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();

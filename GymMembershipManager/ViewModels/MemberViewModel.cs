@@ -14,11 +14,13 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Data;
 
+
 namespace GymMembershipManager.ViewModels
 {
     public partial class MemberViewModel : ObservableObject
     {
         private readonly IMemberRepository _repository;
+        private readonly ISerializationService _serializationService;
         public IWindowService _windowService;
 
         [ObservableProperty] private ObservableCollection<MonthGroup> monthsInYear = new();
@@ -30,10 +32,12 @@ namespace GymMembershipManager.ViewModels
         private ICollectionView _membersView;
         public ICollectionView MembersView => _membersView;
 
-        public MemberViewModel(IMemberRepository repository, IWindowService windowService)
+        public MemberViewModel(IMemberRepository repository, IWindowService windowService, ISerializationService serializationService)
         {   
             _repository = repository;
             _windowService = windowService;
+            _serializationService = serializationService;
+
             LoadMembers();
             _membersView = CollectionViewSource.GetDefaultView(Members);
             _membersView.Filter = FilterMembers;
@@ -58,7 +62,7 @@ namespace GymMembershipManager.ViewModels
         private void LoadMembers()
         {
             Members.Clear();
-            foreach (var member in _repository.GetAll())
+            foreach (var member in _repository.GetAllWithMemberships())
                 Members.Add(member);
         }
 
@@ -152,6 +156,99 @@ namespace GymMembershipManager.ViewModels
                 if (window.DataContext is AddMemberViewModel vm)
                     vm.LoadMember(SelectedMember);
             });
+            LoadMembers();
+        }
+
+        [RelayCommand]
+        private void ExportJson()
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "JSON fajl (*.json)|*.json",
+                FileName = "clanovi_export"
+            };
+            if (dialog.ShowDialog() != true) return;
+
+            var dtos = MapMembersToDto();
+            _serializationService.ExportJson(dtos, dialog.FileName);
+            MessageBox.Show("Eksport uspešan.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void ExportXml()
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "XML fajl (*.xml)|*.xml",
+                FileName = "clanovi_export"
+            };
+            if (dialog.ShowDialog() != true) return;
+
+            var dtos = MapMembersToDto();
+            _serializationService.ExportXml(dtos, dialog.FileName);
+            MessageBox.Show("Eksport uspešan.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void ImportJson()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON fajl (*.json)|*.json"
+            };
+            if (dialog.ShowDialog() != true) return;
+
+            var dtos = _serializationService.ImportJson(dialog.FileName);
+            ImportMembers(dtos);
+            MessageBox.Show($"Importovano {dtos.Count} članova.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        [RelayCommand]
+        private void ImportXml()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "XML fajl (*.xml)|*.xml"
+            };
+            if (dialog.ShowDialog() != true) return;
+
+            var dtos = _serializationService.ImportXml(dialog.FileName);
+            ImportMembers(dtos);
+            MessageBox.Show($"Importovano {dtos.Count} članova.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private List<MemberExportDto> MapMembersToDto()
+        {
+            var members = _repository.GetAllWithMemberships();
+            return members.Select(m => new MemberExportDto
+            {
+                FirstName = m.FirstName,
+                LastName = m.LastName,
+                PhoneNumber = m.PhoneNumber,
+                BirthDate = m.BirthDate,
+                DateJoined = m.DateJoined,
+                Memberships = m.MemberShips.Select(ms => new MembershipExportDto
+                {
+                    MembershipTypeName = ms.MembershipType?.Name ?? "",
+                    StartDate = ms.StartDate,
+                    ExpiryDate = ms.ExpiryDate
+                }).ToList()
+            }).ToList();
+        }
+        private void ImportMembers(List<MemberExportDto> dtos)
+        {
+            foreach (var dto in dtos)
+            {
+                var member = new Member
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    PhoneNumber = dto.PhoneNumber,
+                    BirthDate = dto.BirthDate,
+                    DateJoined = dto.DateJoined
+                };
+                _repository.Add(member);
+            }
             LoadMembers();
         }
     }

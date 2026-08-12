@@ -14,7 +14,7 @@ namespace GymMembershipManager.Data.Repositories
         void Add(Member member);
         void Update(Member member);
         void Delete(int id);
-
+        List<Member> GetAllWithMemberships();
 
     }
 }

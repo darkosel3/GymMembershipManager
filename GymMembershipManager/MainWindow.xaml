@@ -47,6 +47,10 @@
                     Command="{Binding OpenAddMemberWindowCommand}"
                     Padding="15,8"
                     VerticalAlignment="Center"/>
+                            <Button Content="Export JSON" Command="{Binding ExportJsonCommand}" Padding="10,8" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Button Content="Import JSON" Command="{Binding ImportJsonCommand}" Padding="10,8" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Button Content="Export XML" Command="{Binding ExportXmlCommand}" Padding="10,8" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <Button Content="Import XML" Command="{Binding ImportXmlCommand}" Padding="10,8" VerticalAlignment="Center"/>
                         </StackPanel>
 
                     </Grid>
@@ -88,6 +92,7 @@
                             </ItemsControl>
 
                         </StackPanel>
+                        
                     </ScrollViewer>
                 </Grid>
             </TabItem>

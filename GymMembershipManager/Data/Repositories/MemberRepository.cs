@@ -46,5 +46,13 @@ namespace GymMembershipManager.Data.Repositories
         {
             return _context.Members.Find(id);
         }
+
+        public List<Member> GetAllWithMemberships()
+        {
+            return _context.Members
+                           .Include(m => m.MemberShips)
+                           .ThenInclude(ms => ms.MembershipType)
+                           .ToList();
+        }
     }
 }
