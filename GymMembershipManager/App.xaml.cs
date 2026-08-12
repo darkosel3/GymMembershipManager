@@ -16,13 +16,24 @@ namespace GymMembershipManager
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
 
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
 
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-            mainWindow.Show();
+            var loginWindow = ServiceProvider.GetRequiredService<Views.LoginView>();
+            if (loginWindow.ShowDialog() == true)
+            {
+                ShutdownMode = ShutdownMode.OnMainWindowClose;
+                var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+                mainWindow.Show();
+            }
+            else
+            {
+                Shutdown();
+            }
         }
 
         private void ConfigureServices(IServiceCollection services)
@@ -33,14 +44,16 @@ namespace GymMembershipManager
             services.AddScoped<IMembershipRepository, MembershipRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
             services.AddScoped<IGymEquipmentRepository, GymEquipmentRepository>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddSingleton<IWindowService, WindowService>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MembershipViewModel>();
             services.AddTransient<GymEquipmentViewModel>();
             services.AddTransient<MemberViewModel>();
+            services.AddTransient<LoginViewModel>();
             services.AddTransient<AddMemberViewModel>();
             services.AddTransient<ViewModels.MembershipTypeViewModel>();
+            services.AddTransient<Views.LoginView>();
             services.AddTransient<Views.MembershipTypeView>();
             services.AddTransient<MainWindow>();
             services.AddTransient<Views.AddMemberView>();

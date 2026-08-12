@@ -13,5 +13,6 @@ namespace GymMembershipManager.Data.Repositories
         void Remove(int id);
         void Update(User user);
         List<User> GetAll();
+        User? GetByUsername(string username);
     }
 }

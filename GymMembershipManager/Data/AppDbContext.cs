@@ -21,5 +21,18 @@ namespace GymMembershipManager.Data
             string dbPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gym.db");
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 100,
+                Username = "admin",
+                PasswordHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                Role = "Admin"
+            });
+        }
     }
 }

@@ -1,0 +1,28 @@
+﻿<Window x:Class="GymMembershipManager.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Prijava" Height="220" Width="320"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Korisničko ime:"/>
+        <TextBox Grid.Row="1" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10"/>
+
+        <TextBlock Grid.Row="2" Text="Lozinka:"/>
+        <PasswordBox Grid.Row="3" x:Name="PasswordBox" Margin="0,0,0,5"/>
+
+        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red" FontSize="12"/>
+
+        <Button Grid.Row="5" Content="Prijavi se" Command="{Binding LoginCommand}" 
+                Width="100" HorizontalAlignment="Right" Padding="10,5"/>
+    </Grid>
+</Window>
