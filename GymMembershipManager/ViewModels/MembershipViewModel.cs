@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GymMembershipManager.Data.Repositories;
 using GymMembershipManager.Models;
+using GymMembershipManager.Services;
 using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,6 +16,7 @@ namespace GymMembershipManager.ViewModels
         private readonly IMembershipRepository _membershipRepository;
         private readonly IMemberRepository _memberRepository;
         private readonly IMembershipTypeRepository _membershipTypeRepository;
+        private readonly IMembershipFactory _membershipFactory;
 
         [ObservableProperty] private ObservableCollection<Membership> memberships = new();
         [ObservableProperty] private ObservableCollection<Member> allMembers = new();
@@ -28,11 +30,13 @@ namespace GymMembershipManager.ViewModels
         public MembershipViewModel(
             IMembershipRepository membershipRepository,
             IMemberRepository memberRepository,
-            IMembershipTypeRepository membershipTypeRepository)
+            IMembershipTypeRepository membershipTypeRepository,
+            IMembershipFactory membershipFactory)
         {
             _membershipRepository = membershipRepository;
             _memberRepository = memberRepository;
             _membershipTypeRepository = membershipTypeRepository;
+            _membershipFactory = membershipFactory;
             LoadAll();
         }
 
@@ -70,14 +74,7 @@ namespace GymMembershipManager.ViewModels
             if (NewMember == null || NewType == null || NewStartDate == null)
                 return;
 
-            var membership = new Membership
-            {
-                MemberId = NewMember.Id,
-                MembershipTypeId = NewType.Id,
-                StartDate = NewStartDate.Value,
-                ExpiryDate = NewStartDate.Value.AddDays(NewType.DurationInDays)
-            };
-
+            var membership = _membershipFactory.Create(NewMember.Id, NewType, NewStartDate.Value);
             _membershipRepository.Add(membership);
             LoadMemberships();
 

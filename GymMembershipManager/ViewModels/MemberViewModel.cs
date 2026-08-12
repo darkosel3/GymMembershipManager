@@ -20,8 +20,8 @@ namespace GymMembershipManager.ViewModels
     public partial class MemberViewModel : ObservableObject
     {
         private readonly IMemberRepository _repository;
-        private readonly ISerializationService _serializationService;
         public IWindowService _windowService;
+        private readonly IPdfReportService _pdfReportService;
 
         [ObservableProperty] private ObservableCollection<MonthGroup> monthsInYear = new();
         [ObservableProperty] private int currentYear = DateTime.Now.Year;
@@ -32,11 +32,11 @@ namespace GymMembershipManager.ViewModels
         private ICollectionView _membersView;
         public ICollectionView MembersView => _membersView;
 
-        public MemberViewModel(IMemberRepository repository, IWindowService windowService, ISerializationService serializationService)
+        public MemberViewModel(IMemberRepository repository, IWindowService windowService, IPdfReportService pdfReportService)
         {   
             _repository = repository;
             _windowService = windowService;
-            _serializationService = serializationService;
+            _pdfReportService = pdfReportService;
 
             LoadMembers();
             _membersView = CollectionViewSource.GetDefaultView(Members);
@@ -159,63 +159,44 @@ namespace GymMembershipManager.ViewModels
             LoadMembers();
         }
 
-        [RelayCommand]
-        private void ExportJson()
+        private void ExportWithStrategy(ISerializeStrategy strategy)
         {
             var dialog = new Microsoft.Win32.SaveFileDialog
             {
-                Filter = "JSON fajl (*.json)|*.json",
-                FileName = "clanovi_export"
+                Filter = strategy.FileFilter,
+                FileName = strategy.DefaultFileName
             };
             if (dialog.ShowDialog() != true) return;
 
             var dtos = MapMembersToDto();
-            _serializationService.ExportJson(dtos, dialog.FileName);
+            strategy.Export(dtos, dialog.FileName);
             MessageBox.Show("Eksport uspešan.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        [RelayCommand]
-        private void ExportXml()
-        {
-            var dialog = new Microsoft.Win32.SaveFileDialog
-            {
-                Filter = "XML fajl (*.xml)|*.xml",
-                FileName = "clanovi_export"
-            };
-            if (dialog.ShowDialog() != true) return;
-
-            var dtos = MapMembersToDto();
-            _serializationService.ExportXml(dtos, dialog.FileName);
-            MessageBox.Show("Eksport uspešan.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        [RelayCommand]
-        private void ImportJson()
+        private void ImportWithStrategy(ISerializeStrategy strategy)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "JSON fajl (*.json)|*.json"
+                Filter = strategy.FileFilter
             };
             if (dialog.ShowDialog() != true) return;
 
-            var dtos = _serializationService.ImportJson(dialog.FileName);
+            var dtos = strategy.Import(dialog.FileName);
             ImportMembers(dtos);
             MessageBox.Show($"Importovano {dtos.Count} članova.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         [RelayCommand]
-        private void ImportXml()
-        {
-            var dialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "XML fajl (*.xml)|*.xml"
-            };
-            if (dialog.ShowDialog() != true) return;
+        private void ExportJson() => ExportWithStrategy(new JsonSerializeStrategy());
 
-            var dtos = _serializationService.ImportXml(dialog.FileName);
-            ImportMembers(dtos);
-            MessageBox.Show($"Importovano {dtos.Count} članova.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
+        [RelayCommand]
+        private void ExportXml() => ExportWithStrategy(new XmlSerializeStrategy());
+
+        [RelayCommand]
+        private void ImportJson() => ImportWithStrategy(new JsonSerializeStrategy());
+
+        [RelayCommand]
+        private void ImportXml() => ImportWithStrategy(new XmlSerializeStrategy());
 
         private List<MemberExportDto> MapMembersToDto()
         {
@@ -235,6 +216,7 @@ namespace GymMembershipManager.ViewModels
                 }).ToList()
             }).ToList();
         }
+
         private void ImportMembers(List<MemberExportDto> dtos)
         {
             foreach (var dto in dtos)
@@ -251,5 +233,21 @@ namespace GymMembershipManager.ViewModels
             }
             LoadMembers();
         }
+        [RelayCommand]
+        private void ExportPdf()
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "PDF fajl (*.pdf)|*.pdf",
+                FileName = "izvestaj_clanovi"
+            };
+            if (dialog.ShowDialog() != true) return;
+
+            var members = _repository.GetAllWithMemberships();
+            _pdfReportService.GenerateReport(members, dialog.FileName);
+            MessageBox.Show("PDF izveštaj generisan.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+
     }
 }

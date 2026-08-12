@@ -39,13 +39,13 @@ namespace GymMembershipManager
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>();
-            services.AddSingleton<ISerializationService, SerializationService>();
             services.AddScoped<IMemberRepository, MemberRepository>();
             services.AddScoped<IMembershipRepository, MembershipRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
             services.AddScoped<IGymEquipmentRepository, GymEquipmentRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddSingleton<IWindowService, WindowService>();
+            services.AddSingleton<IPdfReportService, PdfReportService>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MembershipViewModel>();
             services.AddTransient<GymEquipmentViewModel>();
@@ -57,6 +57,8 @@ namespace GymMembershipManager
             services.AddTransient<Views.MembershipTypeView>();
             services.AddTransient<MainWindow>();
             services.AddTransient<Views.AddMemberView>();
+            services.AddSingleton<IMembershipFactory, MembershipFactory>();
+
         }
 
     }
