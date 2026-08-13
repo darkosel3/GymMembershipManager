@@ -15,6 +15,76 @@
 
     <Grid >
         <TabControl >
+            <TabItem Header="Dashboard">
+                <Grid DataContext="{Binding DashboardViewModel}" Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Stats cards -->
+                    <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,20">
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Ukupno članova" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding TotalMembers}" FontSize="32" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Aktivne članarine" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding ActiveMemberships}" FontSize="32" FontWeight="Bold" Foreground="Green"/>
+                            </StackPanel>
+                        </Border>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Istekle članarine" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding ExpiredMemberships}" FontSize="32" FontWeight="Bold" Foreground="Red"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Ukupan prihod" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding TotalRevenue, StringFormat={}{0:N0} RSD}" FontSize="28" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Oprema ukupno" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding TotalEquipment}" FontSize="32" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="6" Padding="20" Margin="5">
+                            <StackPanel>
+                                <TextBlock Text="Treba servis" FontSize="14" Foreground="Gray"/>
+                                <TextBlock Text="{Binding EquipmentNeedingMaintenance}" FontSize="32" FontWeight="Bold" Foreground="Orange"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Revenue by type table -->
+                    <StackPanel Grid.Row="2">
+                        <TextBlock Text="{Binding MostPopularType, StringFormat='Najpopularniji tip: {0}'}"
+                       FontSize="16" FontWeight="SemiBold" Margin="5,0,0,10"/>
+                        <DataGrid ItemsSource="{Binding RevenueByType}"
+                      AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tip članarine" Binding="{Binding TypeName}" Width="*"/>
+                                <DataGridTextColumn Header="Broj" Binding="{Binding Count}" Width="80"/>
+                                <DataGridTextColumn Header="Prihod (RSD)" Binding="{Binding Revenue, StringFormat=N0}" Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
+                    <Button Grid.Row="3" Content="Osveži" Command="{Binding RefreshCommand}"
+                HorizontalAlignment="Left" Padding="15,8" Margin="0,15,0,0"/>
+                </Grid>
+            </TabItem>
             <TabItem Header="Članovi">
                 <Grid DataContext="{Binding MemberViewModel}" Margin="10">
                     <Grid.RowDefinitions>

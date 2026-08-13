@@ -13,13 +13,17 @@ namespace GymMembershipManager.ViewModels
         public MembershipTypeViewModel MembershipTypeViewModel { get; }
         public GymEquipmentViewModel GymEquipmentViewModel { get; }
         public MembershipViewModel MembershipViewModel { get; }
+        public DashboardViewModel DashboardViewModel { get; }
 
-        public MainViewModel(MemberViewModel memberVm, MembershipTypeViewModel typeVm, GymEquipmentViewModel equipmentVm, MembershipViewModel membershipVm)
+
+        public MainViewModel(MemberViewModel memberVm, MembershipTypeViewModel typeVm, GymEquipmentViewModel equipmentVm, MembershipViewModel membershipVm, DashboardViewModel dashboardVm)
         {
             MemberViewModel = memberVm;
             MembershipTypeViewModel = typeVm;
             GymEquipmentViewModel = equipmentVm;
             MembershipViewModel = membershipVm;
+            DashboardViewModel = dashboardVm;
+
         }
     }
 }
