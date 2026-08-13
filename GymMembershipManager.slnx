@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="GymMembershipManager.Tests/GymMembershipManager.Tests.csproj" />
   <Project Path="GymMembershipManager/GymMembershipManager.csproj" />
 </Solution>
