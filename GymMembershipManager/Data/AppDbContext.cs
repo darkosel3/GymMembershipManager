@@ -26,13 +26,22 @@ namespace GymMembershipManager.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id = 100,
-                Username = "admin",
-                PasswordHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-                Role = "Admin"
-            });
+            modelBuilder.Entity<User>().HasData(
+     new User
+     {
+         Id = 999,
+         Username = "manager",
+         PasswordHash = "866485796cfa8d7c0cf7111640205b83076433547577511d81f8030ae99ecea5",
+         Role = "Manager"
+     },
+     new User
+     {
+         Id = 1000,
+         Username = "radnik",
+         PasswordHash = "73203dfc63612de279e2757774b5616706040fddc6c098b1e0b4561c2b9ab0ba",
+         Role = "Radnik"
+     }
+ );
         }
     }
 }

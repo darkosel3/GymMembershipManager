@@ -59,6 +59,7 @@ namespace GymMembershipManager
             services.AddTransient<MainWindow>();
             services.AddTransient<Views.AddMemberView>();
             services.AddSingleton<IMembershipFactory, MembershipFactory>();
+            services.AddSingleton<UserSession>();
 
         }
 

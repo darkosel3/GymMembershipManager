@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GymMembershipManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,17 @@ namespace GymMembershipManager.ViewModels
         public MembershipViewModel MembershipViewModel { get; }
         public DashboardViewModel DashboardViewModel { get; }
 
-
-        public MainViewModel(MemberViewModel memberVm, MembershipTypeViewModel typeVm, GymEquipmentViewModel equipmentVm, MembershipViewModel membershipVm, DashboardViewModel dashboardVm)
+        public UserSession Session { get; }
+        public bool IsManager => Session.IsManager;
+        public string WelcomeText => $"Ulogovan: {Session.Username} ({Session.Role})";
+        public MainViewModel(MemberViewModel memberVm, MembershipTypeViewModel typeVm, GymEquipmentViewModel equipmentVm, MembershipViewModel membershipVm, DashboardViewModel dashboardVm, UserSession session)
         {
             MemberViewModel = memberVm;
             MembershipTypeViewModel = typeVm;
             GymEquipmentViewModel = equipmentVm;
             MembershipViewModel = membershipVm;
             DashboardViewModel = dashboardVm;
-
+            Session = session;
         }
     }
 }
