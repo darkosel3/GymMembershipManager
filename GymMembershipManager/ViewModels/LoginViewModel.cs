@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GymMembershipManager.Data.Repositories;
+using GymMembershipManager.Services;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,6 +11,7 @@ namespace GymMembershipManager.ViewModels
     public partial class LoginViewModel : ObservableObject
     {
         private readonly IUserRepository _userRepository;
+        private readonly UserSession _session;
 
         [ObservableProperty] private string username = string.Empty;
         [ObservableProperty] private string errorMessage = string.Empty;
@@ -18,9 +20,10 @@ namespace GymMembershipManager.ViewModels
         public bool IsLoginSuccessful { get; private set; }
         public event Action? RequestClose;
 
-        public LoginViewModel(IUserRepository userRepository)
+        public LoginViewModel(IUserRepository userRepository, UserSession session)
         {
             _userRepository = userRepository;
+            _session = session;
         }
 
         [RelayCommand]
@@ -39,6 +42,8 @@ namespace GymMembershipManager.ViewModels
                 ErrorMessage = "Pogrešno korisničko ime ili lozinka.";
                 return;
             }
+
+            _session.Set(user.Username, user.Role);
             IsLoginSuccessful = true;
             RequestClose?.Invoke();
         }

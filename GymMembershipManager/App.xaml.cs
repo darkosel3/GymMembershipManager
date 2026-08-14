@@ -52,12 +52,14 @@ namespace GymMembershipManager
             services.AddTransient<MemberViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<AddMemberViewModel>();
+            services.AddTransient<DashboardViewModel>();
             services.AddTransient<ViewModels.MembershipTypeViewModel>();
             services.AddTransient<Views.LoginView>();
             services.AddTransient<Views.MembershipTypeView>();
             services.AddTransient<MainWindow>();
             services.AddTransient<Views.AddMemberView>();
             services.AddSingleton<IMembershipFactory, MembershipFactory>();
+            services.AddSingleton<UserSession>();
 
         }
 
