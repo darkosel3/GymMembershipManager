@@ -97,28 +97,64 @@ namespace GymMembershipManager.Tests
             }
         }
     }
-
-    // Test 3: Password hash
-    public class LoginHashTests
+    public class FakeUserRepository : IUserRepository
     {
-        [Fact]
-        public void HashPassword_AdminPassword_MatchesSeedHash()
+        private readonly List<User> _users = new();
+        public void Add(User user) => _users.Add(user);
+        public void Remove(int id) => _users.RemoveAll(u => u.Id == id);
+        public void Update(User user) { }
+        public List<User> GetAll() => _users;
+        public User? GetByUsername(string username) => _users.FirstOrDefault(u => u.Username == username);
+    }
+
+    public class LoginViewModelTests
+    {
+        private static string Hash(string password)
         {
-            var expectedHash = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-
-            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes("admin"));
-            var actualHash = Convert.ToHexString(bytes).ToLowerInvariant();
-
-            Assert.Equal(expectedHash, actualHash);
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
 
         [Fact]
-        public void HashPassword_DifferentPasswords_ProduceDifferentHashes()
+        public void Login_CorrectCredentials_SucceedsAndSetsSession()
         {
-            var hash1 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("admin"))).ToLowerInvariant();
-            var hash2 = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("password"))).ToLowerInvariant();
+            var repo = new FakeUserRepository();
+            repo.Add(new User { Id = 1, Username = "admin", PasswordHash = Hash("admin123"), Role = "Manager" });
+            var session = new UserSession();
+            var vm = new LoginViewModel(repo, session) { Username = "admin", Password = "admin123" };
 
-            Assert.NotEqual(hash1, hash2);
+            vm.LoginCommand.Execute(null);
+
+            Assert.True(vm.IsLoginSuccessful);
+            Assert.Equal("admin", session.Username);
+            Assert.Equal("Manager", session.Role);
+        }
+
+        [Fact]
+        public void Login_WrongPassword_FailsAndSetsErrorMessage()
+        {
+            var repo = new FakeUserRepository();
+            repo.Add(new User { Id = 1, Username = "admin", PasswordHash = Hash("admin123"), Role = "Manager" });
+            var session = new UserSession();
+            var vm = new LoginViewModel(repo, session) { Username = "admin", Password = "wrongpass" };
+
+            vm.LoginCommand.Execute(null);
+
+            Assert.False(vm.IsLoginSuccessful);
+            Assert.False(string.IsNullOrEmpty(vm.ErrorMessage));
+        }
+
+        [Fact]
+        public void Login_UnknownUsername_Fails()
+        {
+            var repo = new FakeUserRepository();
+            var session = new UserSession();
+            var vm = new LoginViewModel(repo, session) { Username = "nobody", Password = "whatever" };
+
+            vm.LoginCommand.Execute(null);
+
+            Assert.False(vm.IsLoginSuccessful);
         }
     }
+
 }
